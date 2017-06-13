@@ -6,7 +6,7 @@ package metabase_cpanp;
 # NAME: metabase_cpanp
 # ABSTRACT: create a metabase profile
 
-use JSON 2;
+use JSON::MaybeXS;
 use Metabase::User::Profile;
 use Metabase::User::Secret;
 use File::Path;
@@ -69,7 +69,7 @@ unless ( -f $output ) {
   # write output
   print "Writing profile to '$output'\n";
   open my $fh, ">", $output;
-  print {$fh} JSON->new->ascii->pretty->encode([
+  print {$fh} JSON::MaybeXS->new->ascii->pretty->encode([
     $profile->as_struct,
     $secret->as_struct,
   ]);
@@ -81,7 +81,7 @@ unless ( -f $output ) {
 
 print "Updating CPANPLUS configuration\n";
 $conf->set_conf( 'cpantest' => 1 );
-$conf->set_conf( 'cpantest_reporter_args' => 
+$conf->set_conf( 'cpantest_reporter_args' =>
     {
       transport       => 'Metabase',
       transport_args  => [ uri => $url, id_file => $output ],
